@@ -13,6 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
+/**
+ * Service for handling operations related to mathematical expressions and random string generation.
+ *
+ * This service leverages user and record services, and operation repository
+ * to execute and log operations while managing user balances.
+ */
 @Service
 public class OperationService {
 
@@ -28,6 +34,18 @@ public class OperationService {
     @Value("${randomsize}")
     private int stringLength;
 
+    /**
+     * Executes the given operation described by the provided {@link OperationDTO}.
+     * The method computes the result of the expression in the operation DTO,
+     * deducts the cost of the operation from the user's balance, and records the operation.
+     *
+     * @param operationDTO the DTO containing details about the operation to be executed,
+     *                     including the user ID and the arithmetic expression to evaluate.
+     * @return the result of the evaluated expression as a {@link BigDecimal}.
+     * @throws IllegalArgumentException if the user associated with the given user ID is not found.
+     * @throws InsufficientBalanceException if the user does not have sufficient balance to perform the operation.
+     * @throws OperationNotFoundException if the operation type detected from the expression is not recognized.
+     */
     public BigDecimal executeOperation(OperationDTO operationDTO) {
         User user = userService.findById(operationDTO.getUserId());
 
@@ -60,6 +78,16 @@ public class OperationService {
         return resultado;
     }
 
+    /**
+     * Detects the type of operation specified in a mathematical expression.
+     *
+     * This method analyzes the input expression string to determine the type of mathematical
+     * operation it represents (e.g., addition, subtraction, multiplication, division, square root).
+     *
+     * @param expression the mathematical expression to be analyzed.
+     * @return a string representing the type of operation detected ("multiply", "divide", "add", "subtract", "sqrt").
+     * @throws OperationNotFoundException if the expression does not contain a valid operation.
+     */
     private String detectOperationType(String expression) {
         if (expression.contains("*")) {
             return "multiply";
@@ -76,6 +104,14 @@ public class OperationService {
         }
     }
 
+    /**
+     * Generates a random string for a given user and updates the user's balance after deducting the cost of the operation.
+     *
+     * @param userId the ID of the user for whom the random string is to be generated
+     * @return a randomly generated string
+     * @throws IllegalArgumentException if the user or operation is not found
+     * @throws InsufficientBalanceException if the user's balance is insufficient to carry out the operation
+     */
     public String generateRandomString(Long userId) {
 
         User user = userService.findById(userId);

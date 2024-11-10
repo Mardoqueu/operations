@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * The Record class represents a record entity with attributes for user,
+ * operation, amount, user balance, operation response, and date. This class
+ * can be stored in a database with an auto-generated ID.
+ */
 @Entity
 public class Record {
 

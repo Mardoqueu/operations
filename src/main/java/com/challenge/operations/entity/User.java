@@ -6,6 +6,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.math.BigDecimal;
 
+/**
+ * The User class represents a user entity with attributes for ID, username,
+ * password, and balance. This class can be stored in the database with
+ * an auto-generated ID.
+ */
 @Entity
 public class User {
 

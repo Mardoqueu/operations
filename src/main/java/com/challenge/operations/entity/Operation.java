@@ -7,6 +7,10 @@ import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
 
+/**
+ * The Operation class represents an operation entity with attributes for type
+ * and cost. This class can be stored in the database with an auto-generated ID.
+ */
 @Entity
 public class Operation {
 

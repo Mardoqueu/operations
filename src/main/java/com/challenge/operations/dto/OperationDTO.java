@@ -1,5 +1,8 @@
 package com.challenge.operations.dto;
 
+/**
+ * Data Transfer Object for representing an operation to be executed.
+ */
 public class OperationDTO {
 
     private Long userId;

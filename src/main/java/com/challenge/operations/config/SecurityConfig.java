@@ -11,12 +11,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.util.List;
 
+/**
+ * Configuration class for setting up security settings in the application.
+ */
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * The JwtRequestFilter is a security filter that processes incoming requests
+     * to authenticate users based on JSON Web Tokens (JWT).
+     *
+     * It is automatically wired into the security configuration and integrated
+     * into the filter chain to intercept requests and perform JWT validation.
+     */
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    /**
+     * Configures the security filter chain for the application.
+     *
+     * @param http the {@link HttpSecurity} to modify.
+     * @return the configured {@link SecurityFilterChain}.
+     * @throws Exception if an error occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -24,7 +41,7 @@ public class SecurityConfig {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
                     corsConfig.setAllowedOrigins(List.of(
                             "https://calc-front-eta.vercel.app/",
-                            "https://calculator-chanllenge.vercel.app/"
+                            "https://calculator-challenge-new.vercel.app/"
                     ));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
