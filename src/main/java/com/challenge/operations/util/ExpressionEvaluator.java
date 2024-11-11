@@ -24,19 +24,17 @@ public class ExpressionEvaluator {
         StringBuilder postfix = new StringBuilder();
         StringTokenizer tokenizer = new StringTokenizer(expression, "+-*/() ", true);
         boolean lastTokenWasOperator = true; // Helps detect consecutive operators
-
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken().trim();
             if (token.isEmpty()) continue;
-
-            if (token.matches("\\d+(\\.\\d+)?")) {  // Check if it is a number
+            if (token.matches("-?\\d+(\\.\\d+)?")) {  // Check if it is a number, allowing negative numbers
                 postfix.append(token).append(" ");
                 lastTokenWasOperator = false;
             } else if (token.equals("sqrt")) {  // Check if it is the sqrt function
                 stack.push("sqrt");
                 lastTokenWasOperator = true;
-            } else if (token.matches("[+\\-*/]")) {  // Checks if it is an operator
-                if (lastTokenWasOperator) {
+            } else if (token.matches("[+\\-*/]")) {  // Check if it is an operator
+                if (lastTokenWasOperator && !token.equals("-")) {  // Allow '-' as a unary operator for negative numbers
                     throw new InvalidExpressionException("Invalid expression: consecutive operators.");
                 }
                 while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(token)) {
@@ -44,10 +42,10 @@ public class ExpressionEvaluator {
                 }
                 stack.push(token);
                 lastTokenWasOperator = true;
-            } else if (token.equals("(")) {  // Checks if it is an open parenthesis
+            } else if (token.equals("(")) {  // Check if it is an open parenthesis
                 stack.push("(");
                 lastTokenWasOperator = true;
-            } else if (token.equals(")")) {  // Checks if it is a closed parenthesis
+            } else if (token.equals(")")) {  // Check if it is a closed parenthesis
                 while (!stack.isEmpty() && !stack.peek().equals("(")) {
                     postfix.append(stack.pop()).append(" ");
                 }
@@ -62,11 +60,9 @@ public class ExpressionEvaluator {
                 throw new InvalidExpressionException("Invalid token: " + token);
             }
         }
-
-        if (lastTokenWasOperator) {
+        if (lastTokenWasOperator && !postfix.toString().endsWith("- ")) {
             throw new InvalidExpressionException("Invalid expression: ends with an operator.");
         }
-
         while (!stack.isEmpty()) {  // Remove remaining operators
             String op = stack.pop();
             if (op.equals("(") || op.equals(")")) {
@@ -74,19 +70,16 @@ public class ExpressionEvaluator {
             }
             postfix.append(op).append(" ");
         }
-
         return postfix.toString();
     }
-
 
     // Evaluates postfix expression
     public double evaluate(String expression) {
         try {
             String postfix = toPostfix(expression);
             Stack<Double> stack = new Stack<>();
-
             for (String token : postfix.split("\\s")) {
-                if (token.matches("\\d+(\\.\\d+)?")) {  // Numbers
+                if (token.matches("-?\\d+(\\.\\d+)?")) {  // Numbers, including negative
                     stack.push(Double.parseDouble(token));
                 } else if (token.matches("[+\\-*/]")) {  // Operators
                     if (stack.size() < 2) {
@@ -110,19 +103,27 @@ public class ExpressionEvaluator {
                         throw new InvalidExpressionException("Invalid expression: no value for sqrt.");
                     }
                     double a = stack.pop();
+                    if (a < 0) {
+                        throw new InvalidExpressionException("Cannot calculate the square root of a negative number.");
+                    }
                     stack.push(Math.sqrt(a));
                 } else {
                     throw new InvalidExpressionException("Invalid token in postfix: " + token);
                 }
             }
-
             if (stack.size() != 1) {
                 throw new InvalidExpressionException("Invalid expression: too many values.");
             }
-
             return stack.pop();
         } catch (EmptyStackException e) {
             throw new InvalidExpressionException("Invalid expression: missing values.");
+        }
+    }
+
+    // Custom Exception for Invalid Expression
+    public static class InvalidExpressionException extends RuntimeException {
+        public InvalidExpressionException(String message) {
+            super(message);
         }
     }
 

@@ -4,8 +4,6 @@ import com.challenge.operations.dto.OperationDTO;
 import com.challenge.operations.entity.Operation;
 import com.challenge.operations.entity.User;
 import com.challenge.operations.exception.InsufficientBalanceException;
-import com.challenge.operations.exception.InvalidOperationException;
-import com.challenge.operations.exception.InvalidSquareRootException;
 import com.challenge.operations.exception.OperationNotFoundException;
 import com.challenge.operations.generator.RandomStringGenerator;
 import com.challenge.operations.repository.OperationRepository;
@@ -48,24 +46,12 @@ public class OperationService {
      * @throws InsufficientBalanceException if the user does not have sufficient balance to perform the operation.
      * @throws OperationNotFoundException if the operation type detected from the expression is not recognized.
      */
-
     public BigDecimal executeOperation(OperationDTO operationDTO) {
         User user = userService.findById(operationDTO.getUserId());
 
         // Evaluate the expression to get the result
         ExpressionEvaluator evaluator = new ExpressionEvaluator();
-        Double result;
-        try {
-            result = evaluator.evaluate(operationDTO.getExpression());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidOperationException("Invalid operation: " + e.getMessage());
-        }
-
-        // Allow negative numbers in general operations
-        if (operationDTO.getExpression().contains("sqrt") && result < 0) {
-            throw new InvalidSquareRootException("Cannot calculate the square root of a negative number.");
-        }
-
+        Double result = evaluator.evaluate(operationDTO.getExpression());
         BigDecimal resultado = BigDecimal.valueOf(result);
 
         // Identify the most cost-intensive type of operation in the expression
