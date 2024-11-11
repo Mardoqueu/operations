@@ -1,7 +1,5 @@
 package com.challenge.operations.util;
 
-import com.challenge.operations.exception.InvalidExpressionException;
-
 import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -126,5 +124,4 @@ public class ExpressionEvaluator {
             super(message);
         }
     }
-
 }
