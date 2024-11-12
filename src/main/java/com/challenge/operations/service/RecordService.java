@@ -60,5 +60,16 @@ public class RecordService {
         return recordRepository.findByUserId(userId);
     }
 
+    public void deleteRecordById(Long recordId, Long userId) {
+        Record record = recordRepository.findById(recordId)
+                .orElseThrow(() -> new IllegalArgumentException("Record not found."));
+
+        if (!record.getUser().getId().equals(userId)) {
+            throw new SecurityException("You are not authorized to delete this record.");
+        }
+
+        recordRepository.deleteById(recordId);
+    }
+
 }
 
