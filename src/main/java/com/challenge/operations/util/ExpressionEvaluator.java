@@ -78,8 +78,8 @@ public class ExpressionEvaluator {
             Stack<Double> stack = new Stack<>();
             for (String token : postfix.split("\\s")) {
                 if (token.matches("-?\\d+(\\.\\d+)?")) {  // Numbers, including negative
-                    stack.push(Double.parseDouble(token));
-                } else if (token.matches("[+\\-*/]")) {  // Operators
+                    stack.push(Double.valueOf(token));
+                }                else if (token.matches("[+\\-*/]")) {  // Operators
                     if (stack.size() < 2) {
                         throw new InvalidExpressionException("Invalid expression: insufficient values for operator " + token);
                     }
