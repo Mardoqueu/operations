@@ -32,7 +32,7 @@ public class ExpressionEvaluator {
                 stack.push("sqrt");
                 lastTokenWasOperator = true;
             } else if (token.matches("[+\\-*/]")) {  // Check if it is an operator
-                if (lastTokenWasOperator && !token.equals("-")) {  // Allow '-' as a unary operator for negative numbers
+                if (lastTokenWasOperator && !(token.equals("-") && postfix.length() > 0)) {  // Allow '-' as a unary operator for negative numbers
                     throw new InvalidExpressionException("Invalid expression: consecutive operators.");
                 }
                 while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(token)) {
@@ -55,7 +55,7 @@ public class ExpressionEvaluator {
                 }
                 lastTokenWasOperator = false;
             } else {
-                throw new InvalidExpressionException("Invalid token: " + token);
+                throw new InvalidExpressionException("Invalid operation: Cannot calculate the square root of a negative number.");
             }
         }
         if (lastTokenWasOperator && !postfix.toString().endsWith("- ")) {
@@ -96,7 +96,7 @@ public class ExpressionEvaluator {
                             stack.push(a / b);
                         }
                     }
-                } else if (token.equals("sqrt")) {  // sqrt function
+                } else if (token.equals("sqrt") || token.equals("√")) {  // Check if it is the sqrt function
                     if (stack.isEmpty()) {
                         throw new InvalidExpressionException("Invalid expression: no value for sqrt.");
                     }
