@@ -4,6 +4,7 @@ import com.challenge.operations.entity.User;
 import com.challenge.operations.exception.UserNotFoundException;
 import com.challenge.operations.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -92,5 +93,11 @@ public class UserService {
         }
 
         return user.getBalance();
+    }
+
+    public User getAuthenticatedUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 }
