@@ -32,8 +32,25 @@ public class ExpressionEvaluator {
                 stack.push("sqrt");
                 lastTokenWasOperator = true;
             } else if (token.matches("[+\\-*/]")) {  // Check if it is an operator
-                if (lastTokenWasOperator && !(token.equals("-") && tokenizer.hasMoreTokens() && tokenizer.nextToken().matches("\\d+(\\.\\d+)?"))) {
-                    throw new InvalidExpressionException("Invalid expression: consecutive operators.");
+                if (lastTokenWasOperator) {
+                    if (!token.equals("-")) {  // Allow '-' as a unary operator for negative numbers
+                        throw new InvalidExpressionException("Invalid expression: consecutive operators.");
+                    } else {
+                        // Allow unary minus and make sure it is part of the number token
+                        if (tokenizer.hasMoreTokens()) {
+                            String nextToken = tokenizer.nextToken().trim();
+                            if (nextToken.matches("\\d+(\\.\\d+)?")) {
+                                // Append the negative number directly to postfix
+                                postfix.append("-").append(nextToken).append(" ");
+                                lastTokenWasOperator = false;
+                                continue;
+                            } else {
+                                throw new InvalidExpressionException("Invalid expression: unexpected token after unary '-'.");
+                            }
+                        } else {
+                            throw new InvalidExpressionException("Invalid expression: missing number after unary '-'.");
+                        }
+                    }
                 }
                 while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(token)) {
                     postfix.append(stack.pop()).append(" ");
