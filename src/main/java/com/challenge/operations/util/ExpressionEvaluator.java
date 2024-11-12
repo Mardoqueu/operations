@@ -32,7 +32,7 @@ public class ExpressionEvaluator {
                 stack.push("sqrt");
                 lastTokenWasOperator = true;
             } else if (token.matches("[+\\-*/]")) {  // Check if it is an operator
-                if (lastTokenWasOperator && !(token.equals("-") && postfix.length() > 0)) {  // Allow '-' as a unary operator for negative numbers
+                if (lastTokenWasOperator && !(token.equals("-") && tokenizer.hasMoreTokens() && tokenizer.nextToken().matches("\\d+(\\.\\d+)?"))) {
                     throw new InvalidExpressionException("Invalid expression: consecutive operators.");
                 }
                 while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(token)) {
@@ -78,8 +78,8 @@ public class ExpressionEvaluator {
             Stack<Double> stack = new Stack<>();
             for (String token : postfix.split("\\s")) {
                 if (token.matches("-?\\d+(\\.\\d+)?")) {  // Numbers, including negative
-                    stack.push(Double.parseDouble(token));
-                } else if (token.matches("[+\\-*/]")) {  // Operators
+                    stack.push(Double.valueOf(token));
+                }                else if (token.matches("[+\\-*/]")) {  // Operators
                     if (stack.size() < 2) {
                         throw new InvalidExpressionException("Invalid expression: insufficient values for operator " + token);
                     }
